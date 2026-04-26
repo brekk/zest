@@ -12,7 +12,7 @@ import String from "String"
 import Tuple from "Tuple"
 import Wish from "Wish"
 
-import SpiritGum from "spirit-gum"
+import VFile from "spirit-gum/VFile"
 
 import Zest from "@/Zest"
 
@@ -41,7 +41,7 @@ main = pipe(
   IO.pTrace("inputs!?"),
   map(
     (v) => pipe(
-      SpiritGum.VFile.fromPath(v, Zest.rules),
+      VFile.fromPath(v, Zest.rules),
       Zest.postProcess,
     )(INITIAL_STATE),
   ),

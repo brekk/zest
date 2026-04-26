@@ -1,12 +1,19 @@
+import type { VFileLine } from "spirit-gum/Line"
+
 import List from "List"
 import Math from "Math"
 import { Just, Nothing } from "Maybe"
 import String from "String"
 
-import Spirit from "spirit-gum"
+import Line from "spirit-gum/Line"
+import VFile from "spirit-gum/VFile"
 
 import TypeSig from "@/Signature"
 import CString from "@/String"
+
+
+
+// processSignatures :: ConcreteTransformer a b
 
 
 
@@ -14,14 +21,14 @@ export processSignatures = (path, lines, state) => {
   cleanSig = (start, end, _lines, x) => x
       ++ " "
       ++ pipe(
-        List.filter(Spirit.Line.isValid),
+        List.filter(Line.isValid),
         List.filter(
           pipe(
-            Spirit.Line.getLineNumber,
+            Line.getLineNumber,
             (i) => (i > start && i < end),
           ),
         ),
-        map(Spirit.Line.render),
+        map(Line.render),
         map(String.trim),
         String.unwords,
       )(_lines)
@@ -37,22 +44,20 @@ export processSignatures = (path, lines, state) => {
         processed
 
       [a, ...z] =>
-        do {
-          // ensure that that we check for balanced parens, so we don't affect shit like `Line (Rule a)`
-          // but we do handle `end)` and `(start` cases
-          return if (CString.isUnopenedClose(a)) {
-            // if it closes, move it to processed
-            helper([...processed, String.join(" -> ", [...current, a])], [], z)
-          } else if (CString.isUnclosedOpen(a)) {
-            // if it opens, keep iterating in current
-            helper(processed, [a], z)
-          } else if (List.length(current) > 0) {
-            // if current is present and has values, keep building it
-            helper(processed, [...current, a], z)
-          } else {
-            // otherwise treat it as a processed value
-            helper([...processed, a], current, z)
-          }
+        // ensure that that we check for balanced parens, so we don't affect shit like `Line (Rule a)`
+        // but we do handle `end)` and `(start` cases
+        if (CString.isUnopenedClose(a)) {
+          // if it closes, move it to processed
+          helper([...processed, String.join(" -> ", [...current, a])], [], z)
+        } else if (CString.isUnclosedOpen(a)) {
+          // if it opens, keep iterating in current
+          helper(processed, [a], z)
+        } else if (List.length(current) > 0) {
+          // if current is present and has values, keep building it
+          helper(processed, [...current, a], z)
+        } else {
+          // otherwise treat it as a processed value
+          helper([...processed, a], current, z)
         }
     }
     return helper([], [], raw)
@@ -74,7 +79,7 @@ export processSignatures = (path, lines, state) => {
         { output, inputs: collapseParens(inputs) }
     },
   )
-  return Spirit.ConcreteFile(
+  return VFile.ConcreteFile(
     path,
     lines,
     pipe(

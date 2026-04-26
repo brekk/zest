@@ -3,7 +3,8 @@ import List from "List"
 import { fromMaybe } from "Maybe"
 import String from "String"
 
-import Spirit from "spirit-gum"
+import Line from "spirit-gum/Line"
+import VFile from "spirit-gum/VFile"
 
 import TypeSig from "@/Signature"
 import CString from "@/String"
@@ -16,11 +17,11 @@ segment = (_lines, _range) => where(_range) {
     pipe(
       List.filter(
         pipe(
-          Spirit.Line.getLineNumber,
+          Line.getLineNumber,
           (i) => s <= i && i < e,
         ),
       ),
-      map(Spirit.Line.render),
+      map(Line.render),
     )(_lines)
 }
 
@@ -57,7 +58,7 @@ nearestEmptyOrAssignment = (index, lines, sigs, assignments) => {
 
         [a, ...z] =>
           do {
-            ln = Spirit.Line.getLineNumber(a)
+            ln = Line.getLineNumber(a)
             overIndex = (ln > index)
             underDeliver = ctx.current < 0 ? true : ln < ctx.current
             // has to be greater than the index
@@ -71,7 +72,7 @@ nearestEmptyOrAssignment = (index, lines, sigs, assignments) => {
       }
     )
   // convert assignments into "lines"
-  assLines = map(where { #[i, _, _] => Spirit.EmptyLine(i) }, assignments)
+  assLines = map(where { #[i, _, _] => Line.EmptyLine(i) }, assignments)
   sigLines = chain(
     (x) => pipe(
       TypeSig.range,
@@ -80,12 +81,12 @@ nearestEmptyOrAssignment = (index, lines, sigs, assignments) => {
           [a, z]
       },
       List.reject(Fn.equals(-1)),
-      map(Spirit.EmptyLine),
+      map(Line.EmptyLine),
     )(x),
     sigs,
   )
   allLines = pipe(
-    List.filter(Spirit.Line.isEmpty),
+    List.filter(Line.isEmpty),
     List.concat($, assLines),
     List.concat($, sigLines),
     List.sort,
@@ -125,7 +126,7 @@ export processTypesAndAliases = (path, _lines, _state) => {
         finalize(TypeDef.Def, _ex, _name, _bod, _range, _cons)
     },
   )
-  return Spirit.ConcreteFile(
+  return VFile.ConcreteFile(
     path,
     _lines,
     {
