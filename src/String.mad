@@ -1,0 +1,70 @@
+import Compare from "Compare"
+import Fn from "Function"
+import String from "String"
+
+
+
+export capitalize = Fn.when(
+  pipe(
+    String.length,
+    Compare.lt(0),
+  ),
+  (s) => pipe(
+      String.slice(0, 1),
+      String.toUpper,
+    )(s)
+      ++ String.slice(1, String.length(s), s),
+)
+
+export REGEX = {
+  NON_WORD_AND_SPACES: "[\\W\\s]",
+  COMMA_SPACE_CLOSED: ",\\s\\)",
+  LEADING_EXPORT: "^export\\>",
+  TYPE: "\\<type\\>",
+  ALIAS: "\\<alias\\>",
+  CAPTURING: {
+    HEADING: "^(#*)\\s*(.*)",
+    MADLIB_FILE: "\\b([\\w\\/\\.]*)\\.mad",
+    LIST_ITEM: " - (\\w*)",
+    TYPE_SIGNATURE: "^(.*)::\\s?(.*)",
+    ASSIGNMENT: "^(export)?\\s?([.\\S]*)\\s?\\=\\s?(.*)",
+    TYPES: "^(export)?\\s?type\\s?(.*)",
+    TYPES_COMPLETE: "^(export)?\\s?(type\\|alias)\\>\\s?(.*)\\s?\\=\\s?(.*)",
+    ALIAS: "^(export)?\\s?alias\\>\\s?(.*)",
+  },
+}
+
+export removeTrailingComma = String.replace(REGEX.COMMA_SPACE_CLOSED, " )")
+
+export slug = pipe(
+  String.toLower,
+  capitalize,
+  String.trim,
+  String.replace(REGEX.NON_WORD_AND_SPACES, " "),
+)
+
+export hasMadlibFile = String.match(REGEX.CAPTURING.MADLIB_FILE)
+export replaceMadlibFileByPattern = String.replace(REGEX.CAPTURING.MADLIB_FILE)
+export hasSlash = String.contains("/")
+
+export linkMadFilesToDomainWithPath = (domain, path, _, _, line) => Fn.when(
+  hasMadlibFile,
+  Fn.ifElse(
+    hasSlash,
+    replaceMadlibFileByPattern("[$1.mad](" ++ domain ++ path ++ "/$1.mad)"),
+    replaceMadlibFileByPattern("[$1.mad](" ++ domain ++ path ++ "/src/$1.mad)"),
+  ),
+)(line)
+
+
+export linkMadFilesToGithub = linkMadFilesToDomainWithPath("//github.com")
+
+export isCommented = String.startsWith("//")
+export isUncommented = Fn.complement(isCommented)
+
+
+export isUnclosedOpen = Fn.both(Fn.complement(String.contains(")")), String.startsWith("("))
+export isUnopenedClose = Fn.both(Fn.complement(String.contains("(")), String.endsWith(")"))
+
+isSignature :: String -> Boolean
+export isSignature = Fn.both(String.contains("::"), isUncommented)

@@ -1,0 +1,102 @@
+import List from "List"
+import Math from "Math"
+import { Just, Nothing } from "Maybe"
+import String from "String"
+
+import Spirit from "spirit-gum"
+
+import TypeSig from "@/Signature"
+import CString from "@/String"
+
+
+
+export processSignatures = (path, lines, state) => {
+  cleanSig = (start, end, _lines, x) => x
+      ++ " "
+      ++ pipe(
+        List.filter(Spirit.Line.isValid),
+        List.filter(
+          pipe(
+            Spirit.Line.getLineNumber,
+            (i) => (i > start && i < end),
+          ),
+        ),
+        map(Spirit.Line.render),
+        map(String.trim),
+        String.unwords,
+      )(_lines)
+
+  cleanSignature = (start, end, _lines, sig) => pipe(
+    String.trim,
+    (_sig) => (Math.abs(start - end) > 1 ? cleanSig(start, end, _lines, _sig) : _sig),
+  )(sig)
+
+  collapseParens = (raw) => {
+    helper = (processed, current, xs) => where(xs) {
+      [] =>
+        processed
+
+      [a, ...z] =>
+        do {
+          // ensure that that we check for balanced parens, so we don't affect shit like `Line (Rule a)`
+          // but we do handle `end)` and `(start` cases
+          return if (CString.isUnopenedClose(a)) {
+            // if it closes, move it to processed
+            helper([...processed, String.join(" -> ", [...current, a])], [], z)
+          } else if (CString.isUnclosedOpen(a)) {
+            // if it opens, keep iterating in current
+            helper(processed, [a], z)
+          } else if (List.length(current) > 0) {
+            // if current is present and has values, keep building it
+            helper(processed, [...current, a], z)
+          } else {
+            // otherwise treat it as a processed value
+            helper([...processed, a], current, z)
+          }
+        }
+    }
+    return helper([], [], raw)
+  }
+
+  // we don't yet handle parens correctly
+  sigToIO = pipe(
+    String.split("->"),
+    map(String.trim),
+    (parts) => where(#[List.slice(0, List.length(parts) - 1, parts), List.last(parts)]) {
+      #[head, Just(end)] =>
+        ({ inputs: head, output: end })
+
+      #[head, Nothing] =>
+        ({ inputs: head, output: "{}" })
+    },
+    where {
+      { inputs, output } =>
+        { output, inputs: collapseParens(inputs) }
+    },
+  )
+  return Spirit.ConcreteFile(
+    path,
+    lines,
+    pipe(
+      .signatures,
+      map(
+        where {
+          TypeSig.Signature(_exported, _name, _signature, #[start, end], _lines, out) =>
+            do {
+              signature = cleanSignature(start, end, lines, _signature)
+              io = sigToIO(signature)
+              return TypeSig.Signature(
+                _exported,
+                _name,
+                signature,
+                #[start, end],
+                List.slice(0, List.length(io.inputs) - 2, io.inputs),
+                io.output,
+              )
+            }
+        },
+      ),
+      (sigs) => ({ ...state, signatures: sigs }),
+    )(state),
+  )
+}

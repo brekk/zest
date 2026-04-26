@@ -1,0 +1,98 @@
+import type { State } from "@/State"
+
+import List from "List"
+import { Just } from "Maybe"
+import String from "String"
+
+import Spirit from "spirit-gum"
+
+import TypeSig from "@/Signature"
+import CString from "@/String"
+
+
+
+captureSignatures :: State -> Integer -> String -> #[State, String]
+export captureSignatures = (state, index, line) => #[
+  if (CString.isSignature(line)) {
+    pipe(
+      String.replace(CString.REGEX.CAPTURING.TYPE_SIGNATURE, "$1<><>$2"),
+      String.split("<><>"),
+      map(String.trim),
+      where {
+        [_name, signature] =>
+          {
+            ...state,
+            signatures: [
+              ...state.signatures,
+              TypeSig.Signature(false, _name, String.trim(signature), #[index, -1], [], ""),
+            ],
+          }
+
+        _ =>
+          state
+      },
+    )(line)
+  } else {
+    state
+  },
+  line,
+]
+
+captureAssignmentsAndExports = (state, index, line) => {
+  match = String.match(CString.REGEX.CAPTURING.ASSIGNMENT, line)
+  return if (match) {
+    pipe(
+      String.trim,
+      String.replace(CString.REGEX.CAPTURING.ASSIGNMENT, "$1<><>$2"),
+      String.split("<><>"),
+      map(String.trim),
+      where {
+        [ex, expected] =>
+          pipe(
+            List.find(TypeSig.nameIs(expected)),
+            where {
+              Just(TypeSig.Signature(_, _name, signature, #[start, _end], _, _)) =>
+                #[
+                  {
+                    ...state,
+                    signatures: [
+                      ...List.reject(TypeSig.nameIs(expected), state.signatures),
+                      TypeSig.Signature(ex != "", _name, signature, #[start, index], [], ""),
+                    ],
+                  },
+                  line,
+                ]
+
+              _ =>
+                #[
+                  ex != "" && expected != ""
+                    ? { ...state, assignments: [...state.assignments, #[index, ex, expected]] }
+                    : state,
+                  line,
+                ]
+            },
+          )(state.signatures)
+
+        _ =>
+          #[state, line]
+      },
+    )(line)
+  } else {
+    #[state, line]
+  }
+}
+
+
+export ruleSignature = Spirit
+  .Rule
+  .lineRule(
+    false,
+    "zest/type-signature",
+    [],
+    [
+      Spirit.Transformer.ofLineRaw(captureSignatures),
+      Spirit.Transformer.ofLineRaw(captureAssignmentsAndExports),
+    ],
+  )
+
+export rule = ruleSignature

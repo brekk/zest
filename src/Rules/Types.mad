@@ -1,0 +1,60 @@
+import { Nothing } from "Maybe"
+import String from "String"
+
+import Spirit from "spirit-gum"
+
+import CString from "@/String"
+import TypeDef from "@/Type"
+
+
+
+captureTypeOrAlias = (regex, aliased, state, index, line) => {
+  match = String.match(regex, line)
+  return if (match) {
+    #[
+      pipe(
+        String.trim,
+        String.replace(regex, "$1<><>$2"),
+        String.split("<><>"),
+        map(String.trim),
+        where {
+          [_exported, typeDef] =>
+            (
+              {
+                ...state,
+                types: [
+                  ...state.types,
+                  TypeDef.aliased(aliased)(
+                    _exported != "",
+                    typeDef,
+                    typeDef,
+                    #[index, -1],
+                    Nothing,
+                  ),
+                ],
+              }
+            )
+
+          _ =>
+            state
+        },
+      )(line),
+      line,
+    ]
+  } else {
+    #[state, line]
+  }
+}
+
+captureTypes = captureTypeOrAlias(CString.REGEX.CAPTURING.TYPES, false)
+captureAliases = captureTypeOrAlias(CString.REGEX.CAPTURING.ALIAS, true)
+
+export ruleTypes = Spirit
+  .Rule
+  .lineRule(false, "zest/type", [], [Spirit.Transformer.ofLineRaw(captureTypes)])
+
+export ruleAliases = Spirit
+  .Rule
+  .lineRule(false, "zest/type-alias", [], [Spirit.Transformer.ofLineRaw(captureAliases)])
+
+export rules = [ruleTypes, ruleAliases]

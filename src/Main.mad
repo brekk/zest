@@ -1,0 +1,52 @@
+import type { State } from "@/State"
+
+import Compare from "Compare"
+import Dict from "Dictionary"
+import File from "File"
+import Fn from "Function"
+import IO from "IO"
+import List from "List"
+import Math from "Math"
+import { Just, Nothing } from "Maybe"
+import String from "String"
+import Tuple from "Tuple"
+import Wish from "Wish"
+
+import SpiritGum from "spirit-gum"
+
+import Zest from "@/Zest"
+
+
+
+fillfull = (badMsg, goodMsg, wish) => Wish.fulfill(
+  (bad) => {
+    IO.pTrace(badMsg, bad)
+  },
+  (good) => {
+    IO.pTrace(goodMsg, good)
+  },
+  wish,
+)
+
+
+INITIAL_STATE :: State
+INITIAL_STATE = { assignments: [], signatures: [], types: [] }
+
+// map(log.main("processed?!")),
+
+chop = (i, xs) => List.slice(i, List.length(xs), xs)
+
+main = pipe(
+  chop(1),
+  IO.pTrace("inputs!?"),
+  map(
+    (v) => pipe(
+      SpiritGum.VFile.fromPath(v, Zest.rules),
+      Zest.postProcess,
+    )(INITIAL_STATE),
+  ),
+  IO.pTrace("processed!?"),
+  Wish.parallel,
+  fillfull("Barf!", "Yay!"),
+  Fn.always({}),
+)

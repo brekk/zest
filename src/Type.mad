@@ -1,0 +1,68 @@
+import type { Maybe } from "Maybe"
+
+
+
+export type Definition
+  = DefAlias(Boolean, String, String, #[Integer, Integer], Maybe (List String))
+  | Def(Boolean, String, String, #[Integer, Integer], Maybe (List String))
+
+isAlias :: Definition -> Boolean
+export isAlias = where {
+  DefAlias(_, _, _, _, _) =>
+    true
+
+  _ =>
+    false
+}
+
+exported :: Definition -> Boolean
+export exported = where {
+  DefAlias(x, _, _, _, _) =>
+    x
+
+  Def(x, _, _, _, _) =>
+    x
+}
+
+
+name :: Definition -> String
+export name = where {
+  DefAlias(_, x, _, _, _) =>
+    x
+
+  Def(_, x, _, _, _) =>
+    x
+}
+
+body :: Definition -> String
+export body = where {
+  DefAlias(_, _, x, _, _) =>
+    x
+
+  Def(_, _, x, _, _) =>
+    x
+}
+
+range :: Definition -> #[Integer, Integer]
+export range = where {
+  DefAlias(_, _, _, x, _) =>
+    x
+
+  Def(_, _, _, x, _) =>
+    x
+}
+
+cons :: Definition -> Maybe (List String)
+export cons = where {
+  DefAlias(_, _, _, _, x) =>
+    x
+
+  Def(_, _, _, _, x) =>
+    x
+}
+
+
+export PublicType = Def(true)
+export PrivateType = Def(false)
+
+export aliased = (check) => check ? DefAlias : Def

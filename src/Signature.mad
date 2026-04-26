@@ -1,0 +1,45 @@
+export type Signature
+  = Signature(
+    // exported
+    Boolean,
+    // id
+    String,
+    // body
+    String,
+    // range
+    #[Integer, Integer],
+    // inputs
+    List String,
+    // output
+    String,
+  )
+
+export exported = where {
+  Signature(x, _, _, _, _, _) =>
+    x
+}
+export name = where {
+  Signature(_, x, _, _, _, _) =>
+    x
+}
+export nameIs = (is, x) => is == name(x)
+export body = where {
+  Signature(_, _, x, _, _, _) =>
+    x
+}
+export range = where {
+  Signature(_, _, _, x, _, _) =>
+    x
+}
+export inputs = where {
+  Signature(_, _, _, _, x, _) =>
+    x
+}
+export output = where {
+  Signature(_, _, _, _, _, x) =>
+    x
+}
+
+
+export PublicSignature = Signature(true)
+export PrivateSignature = Signature(false)

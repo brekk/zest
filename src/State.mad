@@ -1,0 +1,10 @@
+import type { Signature } from "@/Signature"
+import type { Definition } from "@/Type"
+
+
+
+export alias State = {
+  assignments :: List #[Integer, String, String],
+  signatures :: List Signature,
+  types :: List Definition,
+}

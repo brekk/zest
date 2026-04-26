@@ -1,0 +1,11 @@
+import Spirit from "spirit-gum"
+
+import { processSignatures } from "@/PostProcess/Signatures"
+import { processTypesAndAliases } from "@/PostProcess/Types"
+
+
+
+export postProcess = pipe(
+  Spirit.VFile.postTransform(processSignatures),
+  Spirit.VFile.postTransform(processTypesAndAliases),
+)

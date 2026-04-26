@@ -1,0 +1,139 @@
+import Fn from "Function"
+import List from "List"
+import { fromMaybe } from "Maybe"
+import String from "String"
+
+import Spirit from "spirit-gum"
+
+import TypeSig from "@/Signature"
+import CString from "@/String"
+import TypeDef from "@/Type"
+
+
+
+segment = (_lines, _range) => where(_range) {
+  #[s, e] =>
+    pipe(
+      List.filter(
+        pipe(
+          Spirit.Line.getLineNumber,
+          (i) => s <= i && i < e,
+        ),
+      ),
+      map(Spirit.Line.render),
+    )(_lines)
+}
+
+extractTypeOrAliasName = pipe(
+  String.split("="),
+  List.first,
+  fromMaybe(""),
+  String.replace(CString.REGEX.LEADING_EXPORT, ""),
+  String.trim,
+  String.replace(CString.REGEX.TYPE, ""),
+  String.trim,
+  String.replace(CString.REGEX.ALIAS, ""),
+  String.trim,
+)
+
+extractConstructors = pipe(
+  String.split("="),
+  List.last,
+  map(
+    pipe(
+      String.split("|"),
+      map(String.trim),
+    ),
+  ),
+)
+
+nearestEmptyOrAssignment = (index, lines, sigs, assignments) => {
+  helper = (ctx, xs) => ctx.done
+    ? ctx.current
+    : (
+      where(xs) {
+        [] =>
+          ctx.current
+
+        [a, ...z] =>
+          do {
+            ln = Spirit.Line.getLineNumber(a)
+            overIndex = (ln > index)
+            underDeliver = ctx.current < 0 ? true : ln < ctx.current
+            // has to be greater than the index
+            // and not greater than the previous
+            return if (overIndex && underDeliver) {
+              helper({ done: true, current: ln }, z)
+            } else {
+              helper({ done: false, current: ctx.current }, z)
+            }
+          }
+      }
+    )
+  // convert assignments into "lines"
+  assLines = map(where { #[i, _, _] => Spirit.EmptyLine(i) }, assignments)
+  sigLines = chain(
+    (x) => pipe(
+      TypeSig.range,
+      where {
+        #[a, z] =>
+          [a, z]
+      },
+      List.reject(Fn.equals(-1)),
+      map(Spirit.EmptyLine),
+    )(x),
+    sigs,
+  )
+  allLines = pipe(
+    List.filter(Spirit.Line.isEmpty),
+    List.concat($, assLines),
+    List.concat($, sigLines),
+    List.sort,
+  )(lines)
+  return helper({ done: false, current: -1 }, allLines)
+}
+finalizeType = (_lines, _state) => (fn, _ex, _name, _bod, _range, _cons) => where(_range) {
+  #[s, e] =>
+    if (e < 0) do {
+      end = nearestEmptyOrAssignment(s, _lines, _state.signatures, _state.assignments)
+      range = #[s, end]
+      typeDef = pipe(
+        segment(_lines),
+        map(String.trim),
+        List.reject(
+          pipe(
+            String.trim,
+            String.startsWith("//"),
+          ),
+        ),
+        String.unwords,
+        CString.removeTrailingComma,
+      )(range)
+      return fn(_ex, extractTypeOrAliasName(typeDef), typeDef, range, extractConstructors(typeDef))
+    } else {
+      fn(_ex, _name, _bod, _range, _cons)
+    }
+}
+export processTypesAndAliases = (path, _lines, _state) => {
+  finalize = finalizeType(_lines, _state)
+  findEndsOfTypes = map(
+    (ty) => where(ty) {
+      TypeDef.DefAlias(_ex, _name, _bod, _range, _cons) =>
+        finalize(TypeDef.DefAlias, _ex, _name, _bod, _range, _cons)
+
+      TypeDef.Def(_ex, _name, _bod, _range, _cons) =>
+        finalize(TypeDef.Def, _ex, _name, _bod, _range, _cons)
+    },
+  )
+  return Spirit.ConcreteFile(
+    path,
+    _lines,
+    {
+      ..._state,
+      types: pipe(
+        .types,
+        findEndsOfTypes,
+      )(_state),
+    },
+  )
+}
