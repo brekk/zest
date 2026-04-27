@@ -6,7 +6,15 @@ import VFile from "spirit-gum/VFile"
 
 
 export processImports = (path, _lines, _state) => {
-  joint = List.zip(_state.importHeads, _state.importTails)
+  joint = pipe(
+    List.zip(_state.importHeads),
+    map(
+      where {
+        #[#[start, isType], #[end, fromPath]] =>
+          #[fromPath, isType, #[start, end], List.slice(start, end, _lines)]
+      },
+    ),
+  )(_state.importTails)
   IO.pTrace("JOIN", joint)
   return VFile.ConcreteFile(path, _lines, _state)
 }
