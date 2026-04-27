@@ -1,6 +1,10 @@
 import Compare from "Compare"
 import Fn from "Function"
+import IO from "IO"
+import { Just, Nothing, fromMaybe, isJust } from "Maybe"
+import { charAt, length } from "String"
 import String from "String"
+import { Wish } from "Wish"
 
 
 
@@ -31,6 +35,7 @@ export REGEX = {
     TYPES: "^(export)?\\s?type\\s?(.*)",
     TYPES_COMPLETE: "^(export)?\\s?(type\\|alias)\\>\\s?(.*)\\s?\\=\\s?(.*)",
     ALIAS: "^(export)?\\s?alias\\>\\s?(.*)",
+    IMPORT: "^import\\s?(type)?\\s?([{}.,]*)\\s?from\\s?(.*)",
   },
 }
 
@@ -68,3 +73,27 @@ export isUnopenedClose = Fn.both(Fn.complement(String.contains("(")), String.end
 
 isSignature :: String -> Boolean
 export isSignature = Fn.both(String.contains("::"), isUncommented)
+
+
+
+
+// TODO: make this cross-env and move to prelude
+
+indexOf :: Char -> String -> Integer
+export indexOf = (ch, str) => {
+  i = 0
+  matched = Nothing
+  while(!isJust(matched) && i <= length(str)) do {
+    check = pipe(
+      charAt(i),
+      map(Fn.equals(ch)),
+      fromMaybe(false),
+    )(str)
+    if (check) do {
+      matched := Just(i)
+    } else do {
+      i := i + 1
+    }
+  }
+  return isJust(matched) ? i : -1
+}

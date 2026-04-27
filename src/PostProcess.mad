@@ -1,5 +1,6 @@
 import VFile from "spirit-gum/VFile"
 
+import { processImports } from "@/PostProcess/Imports"
 import { processSignatures } from "@/PostProcess/Signatures"
 import { processTypesAndAliases } from "@/PostProcess/Types"
 
@@ -8,4 +9,5 @@ import { processTypesAndAliases } from "@/PostProcess/Types"
 export postProcess = pipe(
   VFile.postTransform(processSignatures),
   VFile.postTransform(processTypesAndAliases),
+  VFile.postTransform(processImports),
 )

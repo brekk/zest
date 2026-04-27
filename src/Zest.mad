@@ -1,8 +1,9 @@
 import Post from "@/PostProcess"
+import RuleImports from "@/Rules/Imports"
 import RuleSig from "@/Rules/TypeSignature"
 import RuleTypes from "@/Rules/Types"
 
 
 
-export rules = [RuleSig.rule, ...RuleTypes.rules]
+export rules = [RuleSig.rule, ...RuleTypes.rules, RuleImports.rule]
 export postProcess = Post.postProcess

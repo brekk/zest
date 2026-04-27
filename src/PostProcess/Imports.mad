@@ -1,0 +1,12 @@
+import IO from "IO"
+import List from "List"
+
+import VFile from "spirit-gum/VFile"
+
+
+
+export processImports = (path, _lines, _state) => {
+  joint = List.zip(_state.importHeads, _state.importTails)
+  IO.pTrace("JOIN", joint)
+  return VFile.ConcreteFile(path, _lines, _state)
+}

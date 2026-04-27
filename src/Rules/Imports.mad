@@ -1,0 +1,43 @@
+import IO from "IO"
+import List from "List"
+import { fromMaybe } from "Maybe"
+import String from "String"
+
+import Rule from "spirit-gum/Rule"
+import LineT from "spirit-gum/Rule/TransformerLine"
+
+import CString from "@/String"
+
+
+
+export ruleImports = Rule.lineRule(
+  false,
+  "zest/imports",
+  [],
+  [
+    LineT.ofLineState(
+      (state, index, line) => {
+        copy = line
+        imported = String.startsWith("import", copy)
+        fromfrom = `from\\s?(".*)$`
+        frommed = String.match(fromfrom, line) && String.endsWith(`"`, line)
+        from2 = pipe(
+          (x) => frommed
+            ? pipe(
+              String.split(`"`),
+              List.nth(1),
+              fromMaybe(""),
+            )(x)
+            : x,
+        )(line)
+        importHeads = imported
+          ? [...state.importHeads, #[index, String.contains("type", line)]]
+          : state.importHeads
+        importTails = frommed ? [...state.importTails, #[index, from2]] : state.importTails
+        newState = { ...state, importHeads, importTails }
+        return newState
+      },
+    ),
+  ],
+)
+export rule = ruleImports

@@ -30,7 +30,14 @@ fillfull = (badMsg, goodMsg, wish) => Wish.fulfill(
 
 
 INITIAL_STATE :: State
-INITIAL_STATE = { assignments: [], signatures: [], types: [] }
+INITIAL_STATE = {
+  assignments: [],
+  signatures: [],
+  types: [],
+  imports: [],
+  importHeads: [],
+  importTails: [],
+}
 
 // map(log.main("processed?!")),
 

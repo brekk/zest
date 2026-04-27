@@ -5,6 +5,9 @@ import type { Definition } from "@/Type"
 
 export alias State = {
   assignments :: List #[Integer, String, String],
+  importHeads :: List #[Integer, Boolean],
+  importTails :: List #[Integer, String],
+  imports :: List #[Boolean, String, String],
   signatures :: List Signature,
   types :: List Definition,
 }
