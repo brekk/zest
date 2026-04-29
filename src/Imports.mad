@@ -1,0 +1,51 @@
+import List from "List"
+import { Just, Nothing, fromMaybe } from "Maybe"
+
+
+
+export type Import
+  = Import(String, #[Integer, Integer], String)
+  | BarrelImport(String, #[Integer, Integer], List String)
+  | TypeImport(String, #[Integer, Integer], List String)
+
+export path = where {
+  Import(x, _, _) =>
+    x
+
+  BarrelImport(x, _, _) =>
+    x
+
+  TypeImport(x, _, _) =>
+    x
+}
+export range = where {
+  Import(_, x, _) =>
+    x
+
+  BarrelImport(_, x, _) =>
+    x
+
+  TypeImport(_, x, _) =>
+    x
+}
+export lines = where {
+  BarrelImport(_, _, x) =>
+    x
+
+  TypeImport(_, _, x) =>
+    x
+
+  Import(_, _, x) =>
+    [x]
+}
+
+export local = where {
+  Import(_, _, x) =>
+    Just(x)
+
+  TypeImport(_, _, x) =>
+    Nothing
+
+  BarrelImport(_, _, x) =>
+    Nothing
+}

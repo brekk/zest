@@ -1,0 +1,160 @@
+{
+  "buildHash": "54f90367c19d1e845c3b8155323e1fcc",
+  "jsApi": {
+    "apiInstances": [],
+    "apiAliases": {
+      "src/State.mad#State": "{ assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }"
+    },
+    "apiInterfaces": {},
+    "apiNames": {
+      "src/Signature.mad#name": "Signature -> String",
+      "src/PostProcess.mad#postProcess": "Wish VFileError (ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }) -> Wish VFileError (ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List Import, signatures :: List Signature, types :: List Definition })",
+      "src/String.mad#indexOf": "Char -> String -> Integer",
+      "src/PostProcess/Types.mad#processTypesAndAliases": "Functor m => String -> List VFileLine -> { ...base, assignments :: List #[Integer, a, b], signatures :: List Signature, types :: m Definition } -> ConcreteFile { ...base, assignments :: List #[Integer, a, b], signatures :: List Signature, types :: m Definition }",
+      "src/String.mad#replaceMadlibFileByPattern": "String -> String -> String",
+      "src/String.mad#isSignature": "String -> Boolean",
+      "src/String.mad#isUnopenedClose": "String -> Boolean",
+      "src/Signature.mad#nameIs": "String -> Signature -> Boolean",
+      "src/String.mad#linkMadFilesToGithub": "String -> a -> b -> String -> String",
+      "src/Imports.mad#local": "Import -> Maybe String",
+      "src/Rules/Imports.mad#rule": "Rule { ...base, importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String] }",
+      "src/PostProcess/Imports.mad#processImports": "String -> List VFileLine -> { ...base, importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String] } -> ConcreteFile { ...base, importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List Import }",
+      "src/Type.mad#PrivateType": "String -> String -> #[Integer, Integer] -> Maybe (List String) -> Definition",
+      "src/String.mad#linkMadFilesToDomainWithPath": "String -> String -> a -> b -> String -> String",
+      "src/Type.mad#aliased": "Boolean -> Boolean -> String -> String -> #[Integer, Integer] -> Maybe (List String) -> Definition",
+      "src/Signature.mad#exported": "Signature -> Boolean",
+      "src/Imports.mad#range": "Import -> #[Integer, Integer]",
+      "src/Signature.mad#body": "Signature -> String",
+      "src/String.mad#isCommented": "String -> Boolean",
+      "src/Imports.mad#path": "Import -> String",
+      "src/String.mad#collapseSignatureParens": "List String -> List String",
+      "src/Type.mad#body": "Definition -> String",
+      "src/Type.mad#name": "Definition -> String",
+      "src/Type.mad#range": "Definition -> #[Integer, Integer]",
+      "src/Signature.mad#range": "Signature -> #[Integer, Integer]",
+      "src/Rules/TypeSignature.mad#captureSignatures": "{ assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition } -> Integer -> String -> #[{ assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }, String]",
+      "src/Signature.mad#PublicSignature": "String -> String -> #[Integer, Integer] -> List String -> String -> Signature",
+      "src/Type.mad#exported": "Definition -> Boolean",
+      "src/String.mad#REGEX": "{ ALIAS :: String, CAPTURING :: { ALIAS :: String, ASSIGNMENT :: String, HEADING :: String, IMPORT :: String, LIST_ITEM :: String, MADLIB_FILE :: String, TYPES :: String, TYPES_COMPLETE :: String, TYPE_SIGNATURE :: String }, COMMA_SPACE_CLOSED :: String, LEADING_EXPORT :: String, NON_WORD_AND_SPACES :: String, TYPE :: String }",
+      "src/Signature.mad#inputs": "Signature -> List String",
+      "src/String.mad#isUncommented": "String -> Boolean",
+      "src/Rules/Types.mad#ruleTypes": "Rule { ...base, types :: List Definition }",
+      "src/String.mad#indexOfAfter": "Integer -> Char -> String -> Integer",
+      "src/Imports.mad#lines": "Import -> List String",
+      "src/String.mad#removeTrailingComma": "String -> String",
+      "src/Type.mad#cons": "Definition -> Maybe (List String)",
+      "src/String.mad#capitalize": "String -> String",
+      "src/Zest.mad#postProcess": "Wish VFileError (ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }) -> Wish VFileError (ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List Import, signatures :: List Signature, types :: List Definition })",
+      "src/Rules/Types.mad#rules": "List (Rule { ...base, types :: List Definition })",
+      "src/String.mad#collapseParensBy": "(List String -> String) -> List String -> List String",
+      "src/Rules/Imports.mad#ruleImports": "Rule { ...base, importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String] }",
+      "src/Rules/TypeSignature.mad#ruleSignature": "Rule { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }",
+      "src/Signature.mad#output": "Signature -> String",
+      "src/Type.mad#PublicType": "String -> String -> #[Integer, Integer] -> Maybe (List String) -> Definition",
+      "src/String.mad#indexOfAfterWhile": "Integer -> Char -> String -> Integer",
+      "src/String.mad#isUnclosedOpen": "String -> Boolean",
+      "src/String.mad#slug": "String -> String",
+      "src/Rules/Types.mad#ruleAliases": "Rule { ...base, types :: List Definition }",
+      "src/String.mad#hasMadlibFile": "String -> Boolean",
+      "src/PostProcess/Signatures.mad#processSignatures": "String -> List VFileLine -> { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition } -> ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }",
+      "src/String.mad#hasSlash": "String -> Boolean",
+      "src/Zest.mad#rules": "List (Rule { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition })",
+      "src/Signature.mad#PrivateSignature": "String -> String -> #[Integer, Integer] -> List String -> String -> Signature",
+      "src/Rules/TypeSignature.mad#rule": "Rule { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }",
+      "src/Type.mad#isAlias": "Definition -> Boolean"
+    },
+    "apiTypes": {
+      "src/Signature.mad#Signature": [
+        "Signature Boolean String String #[Integer, Integer] (List String) String"
+      ],
+      "src/Type.mad#Definition": [
+        "DefAlias Boolean String String #[Integer, Integer] (Maybe (List String))",
+        "Def Boolean String String #[Integer, Integer] (Maybe (List String))"
+      ],
+      "src/Imports.mad#Import": [
+        "Import String #[Integer, Integer] String",
+        "BarrelImport String #[Integer, Integer] (List String)",
+        "TypeImport String #[Integer, Integer] (List String)"
+      ]
+    }
+  },
+  "llvmApi": {
+    "apiInstances": [],
+    "apiAliases": {
+      "src/State.mad#State": "{ assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }"
+    },
+    "apiInterfaces": {},
+    "apiNames": {
+      "src/Signature.mad#name": "Signature -> String",
+      "src/PostProcess.mad#postProcess": "Wish VFileError (ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }) -> Wish VFileError (ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List Import, signatures :: List Signature, types :: List Definition })",
+      "src/String.mad#indexOf": "Char -> String -> Integer",
+      "src/PostProcess/Types.mad#processTypesAndAliases": "Functor m => String -> List VFileLine -> { ...base, assignments :: List #[Integer, a, b], signatures :: List Signature, types :: m Definition } -> ConcreteFile { ...base, assignments :: List #[Integer, a, b], signatures :: List Signature, types :: m Definition }",
+      "src/String.mad#replaceMadlibFileByPattern": "String -> String -> String",
+      "src/String.mad#isSignature": "String -> Boolean",
+      "src/String.mad#isUnopenedClose": "String -> Boolean",
+      "src/Signature.mad#nameIs": "String -> Signature -> Boolean",
+      "src/String.mad#linkMadFilesToGithub": "String -> a -> b -> String -> String",
+      "src/Imports.mad#local": "Import -> Maybe String",
+      "src/Rules/Imports.mad#rule": "Rule { ...base, importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String] }",
+      "src/PostProcess/Imports.mad#processImports": "String -> List VFileLine -> { ...base, importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String] } -> ConcreteFile { ...base, importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List Import }",
+      "src/Type.mad#PrivateType": "String -> String -> #[Integer, Integer] -> Maybe (List String) -> Definition",
+      "src/String.mad#linkMadFilesToDomainWithPath": "String -> String -> a -> b -> String -> String",
+      "src/Type.mad#aliased": "Boolean -> Boolean -> String -> String -> #[Integer, Integer] -> Maybe (List String) -> Definition",
+      "src/Signature.mad#exported": "Signature -> Boolean",
+      "src/Imports.mad#range": "Import -> #[Integer, Integer]",
+      "src/Signature.mad#body": "Signature -> String",
+      "src/String.mad#isCommented": "String -> Boolean",
+      "src/Imports.mad#path": "Import -> String",
+      "src/String.mad#collapseSignatureParens": "List String -> List String",
+      "src/Type.mad#body": "Definition -> String",
+      "src/Type.mad#name": "Definition -> String",
+      "src/Type.mad#range": "Definition -> #[Integer, Integer]",
+      "src/Signature.mad#range": "Signature -> #[Integer, Integer]",
+      "src/Rules/TypeSignature.mad#captureSignatures": "{ assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition } -> Integer -> String -> #[{ assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }, String]",
+      "src/Signature.mad#PublicSignature": "String -> String -> #[Integer, Integer] -> List String -> String -> Signature",
+      "src/Type.mad#exported": "Definition -> Boolean",
+      "src/String.mad#REGEX": "{ ALIAS :: String, CAPTURING :: { ALIAS :: String, ASSIGNMENT :: String, HEADING :: String, IMPORT :: String, LIST_ITEM :: String, MADLIB_FILE :: String, TYPES :: String, TYPES_COMPLETE :: String, TYPE_SIGNATURE :: String }, COMMA_SPACE_CLOSED :: String, LEADING_EXPORT :: String, NON_WORD_AND_SPACES :: String, TYPE :: String }",
+      "src/Signature.mad#inputs": "Signature -> List String",
+      "src/String.mad#isUncommented": "String -> Boolean",
+      "src/Rules/Types.mad#ruleTypes": "Rule { ...base, types :: List Definition }",
+      "src/String.mad#indexOfAfter": "Integer -> Char -> String -> Integer",
+      "src/Imports.mad#lines": "Import -> List String",
+      "src/String.mad#removeTrailingComma": "String -> String",
+      "src/Type.mad#cons": "Definition -> Maybe (List String)",
+      "src/String.mad#capitalize": "String -> String",
+      "src/Zest.mad#postProcess": "Wish VFileError (ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }) -> Wish VFileError (ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List Import, signatures :: List Signature, types :: List Definition })",
+      "src/Rules/Types.mad#rules": "List (Rule { ...base, types :: List Definition })",
+      "src/String.mad#collapseParensBy": "(List String -> String) -> List String -> List String",
+      "src/Rules/Imports.mad#ruleImports": "Rule { ...base, importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String] }",
+      "src/Rules/TypeSignature.mad#ruleSignature": "Rule { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }",
+      "src/Signature.mad#output": "Signature -> String",
+      "src/Type.mad#PublicType": "String -> String -> #[Integer, Integer] -> Maybe (List String) -> Definition",
+      "src/String.mad#indexOfAfterWhile": "Integer -> Char -> String -> Integer",
+      "src/String.mad#isUnclosedOpen": "String -> Boolean",
+      "src/String.mad#slug": "String -> String",
+      "src/Rules/Types.mad#ruleAliases": "Rule { ...base, types :: List Definition }",
+      "src/String.mad#hasMadlibFile": "String -> Boolean",
+      "src/PostProcess/Signatures.mad#processSignatures": "String -> List VFileLine -> { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition } -> ConcreteFile { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }",
+      "src/String.mad#hasSlash": "String -> Boolean",
+      "src/Zest.mad#rules": "List (Rule { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition })",
+      "src/Signature.mad#PrivateSignature": "String -> String -> #[Integer, Integer] -> List String -> String -> Signature",
+      "src/Rules/TypeSignature.mad#rule": "Rule { assignments :: List #[Integer, String, String], importHeads :: List #[Integer, Boolean], importTails :: List #[Integer, String], imports :: List #[Boolean, String, String], signatures :: List Signature, types :: List Definition }",
+      "src/Type.mad#isAlias": "Definition -> Boolean"
+    },
+    "apiTypes": {
+      "src/Signature.mad#Signature": [
+        "Signature Boolean String String #[Integer, Integer] (List String) String"
+      ],
+      "src/Type.mad#Definition": [
+        "DefAlias Boolean String String #[Integer, Integer] (Maybe (List String))",
+        "Def Boolean String String #[Integer, Integer] (Maybe (List String))"
+      ],
+      "src/Imports.mad#Import": [
+        "Import String #[Integer, Integer] String",
+        "BarrelImport String #[Integer, Integer] (List String)",
+        "TypeImport String #[Integer, Integer] (List String)"
+      ]
+    }
+  },
+  "versionHash": "25e64aa754c310d45c1e084d574c1bb0"
+}

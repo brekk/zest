@@ -1,20 +1,67 @@
 import IO from "IO"
 import List from "List"
+import String from "String"
 
+import Line from "spirit-gum/Line"
 import VFile from "spirit-gum/VFile"
 
+import I from "@/Imports"
+import CString from "@/String"
 
+
+
+listHasOpeningBrace = pipe(
+  String.unwords,
+  String.contains("{"),
+)
+
+getDestructured = pipe(
+  String.unwords,
+  (y) => {
+    a = CString.indexOf('{', y)
+    b = CString.indexOf('}', y)
+    return String.slice(a + 1, b, y)
+  },
+  String.split(","),
+  map(String.trim),
+  List.reject(String.isEmpty),
+)
+
+getLocalName = pipe(
+  String.unwords,
+  (r) => {
+    one = CString.indexOf(' ', r)
+    two = CString.indexOfAfter(one + 1, ' ', r)
+    return String.slice(one, two, r)
+  },
+  String.trim,
+)
+
+combine = (_lines, { importHeads, importTails }) => pipe(
+  List.zip(importHeads),
+  map(
+    where {
+      #[#[start, isType], #[end, fromPath]] =>
+        do {
+          lines = List.slice(start, end, _lines)
+          range = #[start, end]
+          return if (isType) {
+            I.TypeImport(fromPath, range, getDestructured(lines))
+          } else if (listHasOpeningBrace(lines)) {
+            I.BarrelImport(fromPath, range, getDestructured(lines))
+          } else {
+            I.Import(fromPath, range, getLocalName(lines))
+          }
+        }
+    },
+  ),
+)(importTails)
 
 export processImports = (path, _lines, _state) => {
-  joint = pipe(
-    List.zip(_state.importHeads),
-    map(
-      where {
-        #[#[start, isType], #[end, fromPath]] =>
-          #[fromPath, isType, #[start, end], List.slice(start, end, _lines)]
-      },
-    ),
-  )(_state.importTails)
-  IO.pTrace("JOIN", joint)
-  return VFile.ConcreteFile(path, _lines, _state)
+  imports = combine(map(Line.render, _lines), _state)
+  processed = !List.isEmpty(imports)
+  importHeads = processed ? [] : _state.importHeads
+  importTails = processed ? [] : _state.importTails
+  IO.pTrace("JOIN", imports)
+  return VFile.ConcreteFile(path, _lines, { ..._state, importHeads, importTails, imports })
 }

@@ -1,6 +1,7 @@
 import Compare from "Compare"
 import Fn from "Function"
 import IO from "IO"
+import List from "List"
 import { Just, Nothing, fromMaybe, isJust } from "Maybe"
 import { charAt, length } from "String"
 import String from "String"
@@ -68,32 +69,81 @@ export isCommented = String.startsWith("//")
 export isUncommented = Fn.complement(isCommented)
 
 
-export isUnclosedOpen = Fn.both(Fn.complement(String.contains(")")), String.startsWith("("))
-export isUnopenedClose = Fn.both(Fn.complement(String.contains("(")), String.endsWith(")"))
+export isUnclosedOpen = Fn.both(Fn.complement(String.contains(`)`)), String.startsWith(`(`))
+export isUnopenedClose = Fn.both(Fn.complement(String.contains(`(`)), String.endsWith(`)`))
 
 isSignature :: String -> Boolean
 export isSignature = Fn.both(String.contains("::"), isUncommented)
 
 
 
+collapseParensBy :: (List String -> String) -> List String -> List String
+export collapseParensBy = (joiner, raw) => {
+  helper = (processed, current, xs) => where(xs) {
+    [] =>
+      processed
+
+    [a, ...z] =>
+      // ensure that that we check for balanced parens, so we don't affect shit like `Line (Rule a)`
+      // but we do handle `end)` and `(start` cases
+      if (isUnopenedClose(a)) {
+        // if it closes, move it to processed
+        helper([...processed, joiner([...current, a])], [], z)
+      } else if (isUnclosedOpen(a)) {
+        // if it opens, keep iterating in current
+        helper(processed, [a], z)
+      } else if (!List.isEmpty(current)) {
+        // if current is present and has values, keep building it
+        helper(processed, [...current, a], z)
+      } else {
+        // otherwise treat it as a processed value
+        helper([...processed, a], current, z)
+      }
+  }
+  return helper([], [], raw)
+}
+
+export collapseSignatureParens = collapseParensBy(String.join(" -> "))
 
 // TODO: make this cross-env and move to prelude
 
-indexOf :: Char -> String -> Integer
-export indexOf = (ch, str) => {
-  i = 0
-  matched = Nothing
-  while(!isJust(matched) && i <= length(str)) do {
+indexOfAfter :: Integer -> Char -> String -> Integer
+export indexOfAfter = (h, ch, _str) => {
+  max = length(_str)
+  helper :: Integer -> Integer -> List Char -> Integer
+  helper = (matched, i, xs) => if (matched > -1 || i > max) {
+    matched
+  } else do {
+    j = i + 1
+    return where(xs) {
+      [] =>
+        matched
+
+      [a, ...z] =>
+        helper(a == ch ? i : matched, j, z)
+    }
+  }
+
+  return helper(-1, h, List.slice(h, String.length(_str), String.toList(_str)))
+}
+indexOfAfterWhile :: Integer -> Char -> String -> Integer
+export indexOfAfterWhile = (h, ch, str) => {
+  i = h
+  matched = -1
+  while(matched < 0 && i <= length(str)) do {
     check = pipe(
       charAt(i),
       map(Fn.equals(ch)),
       fromMaybe(false),
     )(str)
     if (check) do {
-      matched := Just(i)
+      matched := i
     } else do {
       i := i + 1
     }
   }
-  return isJust(matched) ? i : -1
+  return matched
 }
+
+indexOf :: Char -> String -> Integer
+export indexOf = indexOfAfter(0)

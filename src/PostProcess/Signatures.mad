@@ -1,4 +1,7 @@
 import type { VFileLine } from "spirit-gum/Line"
+import type { ConcreteFile, ConcreteTransformer } from "spirit-gum/VFile"
+
+import type { State } from "@/State"
 
 import List from "List"
 import Math from "Math"
@@ -13,11 +16,9 @@ import CString from "@/String"
 
 
 
-// processSignatures :: ConcreteTransformer a b
-
-
-
+processSignatures :: ConcreteTransformer State (ConcreteFile State)
 export processSignatures = (path, lines, state) => {
+  cleanSig :: Integer -> Integer -> List VFileLine -> String -> String
   cleanSig = (start, end, _lines, x) => x
       ++ " "
       ++ pipe(
@@ -33,37 +34,12 @@ export processSignatures = (path, lines, state) => {
         String.unwords,
       )(_lines)
 
+  cleanSignature :: Integer -> Integer -> List VFileLine -> String -> String
   cleanSignature = (start, end, _lines, sig) => pipe(
     String.trim,
     (_sig) => (Math.abs(start - end) > 1 ? cleanSig(start, end, _lines, _sig) : _sig),
   )(sig)
 
-  collapseParens = (raw) => {
-    helper = (processed, current, xs) => where(xs) {
-      [] =>
-        processed
-
-      [a, ...z] =>
-        // ensure that that we check for balanced parens, so we don't affect shit like `Line (Rule a)`
-        // but we do handle `end)` and `(start` cases
-        if (CString.isUnopenedClose(a)) {
-          // if it closes, move it to processed
-          helper([...processed, String.join(" -> ", [...current, a])], [], z)
-        } else if (CString.isUnclosedOpen(a)) {
-          // if it opens, keep iterating in current
-          helper(processed, [a], z)
-        } else if (List.length(current) > 0) {
-          // if current is present and has values, keep building it
-          helper(processed, [...current, a], z)
-        } else {
-          // otherwise treat it as a processed value
-          helper([...processed, a], current, z)
-        }
-    }
-    return helper([], [], raw)
-  }
-
-  // we don't yet handle parens correctly
   sigToIO = pipe(
     String.split("->"),
     map(String.trim),
@@ -76,7 +52,7 @@ export processSignatures = (path, lines, state) => {
     },
     where {
       { inputs, output } =>
-        { output, inputs: collapseParens(inputs) }
+        { output, inputs: CString.collapseSignatureParens(inputs) }
     },
   )
   return VFile.ConcreteFile(

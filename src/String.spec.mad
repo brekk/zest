@@ -1,0 +1,30 @@
+import Study from "Study"
+
+import CString from "@/String"
+
+
+
+EMAIL = "cool@science.info.biz"
+EMAIL_CASES = [
+  #[
+    //// one 
+    #[0, '@'],
+    4,
+  ],
+  //// two
+  #[#[0, '.'], 12],
+  /////// threeeee
+  #[#[13, '.'], 17],
+]
+
+Study.report(Study.caseN2(CString.indexOfAfter($, $, EMAIL)), "indexOfAfter", EMAIL_CASES)
+Study.report(Study.caseN2(CString.indexOfAfterWhile($, $, EMAIL)), "indexOfAfterWhile", EMAIL_CASES)
+
+
+MATH = "(2 * 4) - 6 / 3"
+MATH_CASES = [#[#[0, '@'], -1], #[#[0, '+'], -1]]
+Study.report(
+  Study.caseN2(CString.indexOfAfter($, $, MATH)),
+  "indexOfAfter - failing cases",
+  MATH_CASES,
+)

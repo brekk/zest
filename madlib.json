@@ -5,22 +5,21 @@
   "importAliases": {
     ".": "src"
   },
-
   "dependencies": [
     {
+      "minVersion": "0.0.4",
       "url": "https://github.com/brekk/study/archive/refs/tags/v0.0.4.zip",
-      "description": "Study",
-      "minVersion": "0.0.4"
+      "description": "Study"
     },
     {
+      "minVersion": "0.0.7",
       "url": "https://github.com/brekk/party-bus/archive/refs/tags/v0.0.7.zip",
-      "description": "PartyBus",
-      "minVersion": "0.0.7"
+      "description": "PartyBus"
     },
     {
+      "minVersion": "0.2.0",
       "url": "https://github.com/brekk/spirit-gum/archive/refs/tags/v0.2.0.zip",
-      "description": "spirit-gum",
-      "minVersion": "0.2.0"
+      "description": "spirit-gum"
     }
   ]
 }
