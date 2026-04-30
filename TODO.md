@@ -1,0 +1,2 @@
+- add an automatic path fixer for "." -> "@"
+- add a consolidated "exports" list from all signatures and other concrete entities
